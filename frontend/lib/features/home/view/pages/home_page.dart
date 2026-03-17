@@ -70,25 +70,92 @@ class _HomePageState extends State<HomePage> {
 
             ElevatedButton(
               onPressed: () async {
-                final input = IrisInput(
-                  sepalLength: double.parse(sepalLengthController.text),
-                  sepalWidth: double.parse(sepalWidthController.text),
-                  petalLength: double.parse(petalLengthController.text),
-                  petalWidth: double.parse(petalWidthController.text),
-                );
-                await vm.predict(input);
+                try {
+                  // Validate that all fields are not empty
+                  if (sepalLengthController.text.isEmpty ||
+                      sepalWidthController.text.isEmpty ||
+                      petalLengthController.text.isEmpty ||
+                      petalWidthController.text.isEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Error"),
+                        content: const Text("Please fill in all fields"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
 
-                setState(() {});
-                showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Prediction'),
-                    content: Text(vm.prediction),
-                  ),
-                );
+                  final input = IrisInput(
+                    sepalLength: double.parse(sepalLengthController.text),
+                    sepalWidth: double.parse(sepalWidthController.text),
+                    petalLength: double.parse(petalLengthController.text),
+                    petalWidth: double.parse(petalWidthController.text),
+                  );
+
+                  await vm.predict(input);
+
+                  setState(() {});
+
+                  if (vm.errorMessage != null) {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Error"),
+                        content: Text(vm.errorMessage!),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Prediction"),
+                        content: Text(vm.prediction),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text("Error"),
+                      content: const Text(
+                        "Please enter valid numbers for all fields",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    ),
+                  );
+                }
               },
               child: const Text("Predict"),
             ),
+
+            const SizedBox(height: 20),
+
+            if (vm.isLoading) const CircularProgressIndicator(),
           ],
         ),
       ),

@@ -6,7 +6,7 @@ from schema import IrisInput
 app = FastAPI()
 
 try:
-    model = pickle.load(open("backend/model/iris_pipeline.pkl", "rb"))
+    model = pickle.load(open("model/iris_pipeline.pkl", "rb"))
 except Exception as e:
     model = None
     print("Error loading model:", e)

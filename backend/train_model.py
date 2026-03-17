@@ -5,7 +5,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 import pickle
 
-df = pd.read_csv("backend/data/iris.csv")
+df = pd.read_csv("data/iris.csv")
 
 X = df[["SepalLengthCm", "SepalWidthCm", "PetalLengthCm", "PetalWidthCm"]]
 y = df["Species"]
@@ -18,6 +18,6 @@ pipeline = Pipeline([("scaler", StandardScaler()), ("model", RandomForestClassif
 
 pipeline.fit(X_train, y_train)
 
-pickle.dump(pipeline, open("backend/model/iris_pipeline.pkl", "wb"))
+pickle.dump(pipeline, open("model/iris_pipeline.pkl", "wb"))
 
 print("Model trained and saved successfully!")
