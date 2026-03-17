@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/features/home/model/iris_input.dart';
 import 'package:frontend/features/home/view/widgets/custom_text_field.dart';
+import 'package:frontend/features/home/viewmodel/iris_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,6 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final vm = IrisViewmodel();
+
   //controllers
   final TextEditingController sepalLengthController = TextEditingController();
   final TextEditingController sepalWidthController = TextEditingController();
@@ -65,11 +69,23 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 20),
 
             ElevatedButton(
-              onPressed: () {
-                final sepalLength = sepalLengthController.text;
-                final sepalWidth = sepalWidthController.text;
-                final petalLength = petalLengthController.text;
-                final petalWidth = petalWidthController.text;
+              onPressed: () async {
+                final input = IrisInput(
+                  sepalLength: double.parse(sepalLengthController.text),
+                  sepalWidth: double.parse(sepalWidthController.text),
+                  petalLength: double.parse(petalLengthController.text),
+                  petalWidth: double.parse(petalWidthController.text),
+                );
+                await vm.predict(input);
+
+                setState(() {});
+                showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Prediction'),
+                    content: Text(vm.prediction),
+                  ),
+                );
               },
               child: const Text("Predict"),
             ),
